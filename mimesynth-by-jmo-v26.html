@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>MimeSynth by JMO v26.1 (Mobile Fix)</title>
+<style>
+:root{
+  --bg:#040404;
+  --panel:rgba(10,10,14,.9);
+  --line:rgba(255,255,255,.1);
+  --text:#f6f7fb;
+  --muted:#a8b0bc;
+  --accent:#00d7ff;
+  --ui-w:344px;
+  --radius:14px;
+}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%;background:var(--bg);overflow:hidden;font-family:Inter,Arial,sans-serif;color:var(--text)}
+video{position:absolute;inset:0;width:100vw;height:100vh;object-fit:cover;transform:scaleX(-1)}
+canvas{position:absolute;inset:0;width:100vw;height:100vh;z-index:2;pointer-events:none}
+
+#scaleLeft,#scaleRight{position:absolute;top:0;width:120px;height:calc(100% - 42px);z-index:3;pointer-events:none;padding:12px 8px;display:flex;flex-direction:column;justify-content:space-between}
+#scaleLeft{left:0} #scaleRight{right:var(--ui-w)}
+
+.gridWrap{position:absolute;left:0;top:0;width:calc(100% - var(--ui-w));height:calc(100% - 42px);z-index:3;pointer-events:none}
+.gridCell{position:absolute;border:1px solid rgba(255,255,255,.05);padding:10px;font-size:14px;font-weight:900;color:rgba(255,255,255,.5)}
+
+#ui{position:absolute;right:0;top:0;width:var(--ui-w);height:calc(100vh - 42px);z-index:10;background:rgba(8,8,12,.95);backdrop-filter:blur(10px);border-left:1px solid var(--line);overflow:hidden}
+#uiScroll{height:100%;overflow-y:auto;padding:15px}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:10px;margin-bottom:10px}
+
+/* MOBILNE FIXY */
+@media (max-width: 900px) {
+  #ui {
+    position: fixed;
+    right: -100%;
+    width: 100vw;
+    height: 100vh;
+    transition: right 0.3s ease;
+    z-index: 9999;
+  }
+  #ui.active { right: 0; }
+  #mobileNav { display: flex !important; }
+  
+  /* Podziałki na krawędziach */
+  #scaleLeft { left: 0; width: 60px; }
+  #scaleRight { right: 0; width: 60px; }
+  
+  /* Pasek presetów w menu */
+  #presetBar { display: none; }
+}
+
+#mobileNav {
+  position: fixed;
+  bottom: 0; left: 0;
+  width: 100%; height: 50px;
+  background: #000;
+  display: none;
+  z-index: 10000;
+  border-top: 1px solid var(--line);
+}
+#mobileNav button { flex: 1; border-radius: 0; border: none; background: #222; color: #fff; }
+</style>
+</head>
+<body>
+<video id="video" autoplay playsinline muted></video>
+<canvas id="canvas"></canvas>
+<div id="grid" class="gridWrap"></div>
+<div id="scaleLeft"></div>
+<div id="scaleRight"></div>
+
+<div id="ui">
+  <div id="uiScroll">
+    <div class="card">
+      <button onclick="document.getElementById('ui').classList.remove('active')">ZAMKNIJ MENU</button>
+    </div>
+    <div id="presetContainer"></div> </div>
+</div>
+
+<div id="presetBar">
+  <input id="presetName" type="text" value="preset-1">
+  <select id="presetList"></select>
+  <button id="saveBtn">SAVE</button>
+  <button id="loadBtn">LOAD</button>
+</div>
+
+<div id="mobileNav">
+  <button onclick="toggleUi()">MENU</button>
+  <button onclick="document.getElementById('audioBtn').click()">AUDIO</button>
+  <button onclick="document.getElementById('camBtn').click()">CAM</button>
+</div>
+
+<script>
+function toggleUi() {
+  document.getElementById('ui').classList.toggle('active');
+}
+
+function checkMobile() {
+  const isMobile = window.innerWidth <= 900;
+  const presetBar = document.getElementById('presetBar');
+  const presetCont = document.getElementById('presetContainer');
+  
+  if (isMobile) {
+    presetCont.appendChild(presetBar);
+    presetBar.style.display = 'grid';
+  } else {
+    document.body.appendChild(presetBar);
+  }
+}
+window.addEventListener('resize', checkMobile);
+checkMobile();
+</script>
+</body>
+</html>
